@@ -13,43 +13,51 @@ class YoutubeDay {
       categoryList = new ArrayList<String>();
       
       for (int i = 0; i < files.size(); i++) {
-        table = loadTable(files.get(i), "tsv");  
+        table = loadTable(files.get(i), "tsv");
         
         for (int j = 0; j < table.getRowCount(); j++) {
-            person = new Person();
+            //person = new Person();
             if (!categoryList.contains(table.getString(j, 3)))
                 categoryList.add(table.getString(j, 3));
-            
-            person.videoId = table.getString(j, 0);
-            person.uploader = table.getString(j, 1);
-            person.category = table.getString(j, 3);
-            person.comments = table.getString(j, 8);
-            person.relatedId = table.getString(j, 9);
+                
+            String videoId = table.getString(j, 0);
+            String uploader = table.getString(j, 1);
+            String category = table.getString(j, 3);
+            //String comments = table.getString(j, 8);
+            String relatedId = table.getString(j, 9);
+            int age, vidLength, views, num_ratings, comments;
+            float rating;
            
-            if (table.getString(j, 6) != null) person.rating = Float.parseFloat(table.getString(j, 6));
+            if (table.getString(j, 6) != null) rating = Float.parseFloat(table.getString(j, 6));
+            else rating = 0;
             
             try {
-              person.age = Integer.parseInt(table.getString(j, 2));
+              age = Integer.parseInt(table.getString(j, 2));
             } catch (NumberFormatException e) {
-               //System.err.println(person.videoId+" incorrect age: "+e); 
-              person.age = 0;
+               //System.err.println(person.videoId+" incorrect age: "+e);
+              age = 0;
             }
             try {
-              person.vidLength = Integer.parseInt(table.getString(j, 4));
+              vidLength = Integer.parseInt(table.getString(j, 4));
             } catch (NumberFormatException e) {
-              person.vidLength = 0;
+              vidLength = 0;
             }
             try {
-              person.views = Integer.parseInt(table.getString(j, 5));
+              views = Integer.parseInt(table.getString(j, 5));
             } catch (NumberFormatException e) {
-              person.views = 0;
+              views = 0;
             }
             try {
-              person.num_ratings = Integer.parseInt(table.getString(j, 7));
+              num_ratings = Integer.parseInt(table.getString(j, 7));
             } catch (NumberFormatException e) {
-              person.num_ratings = 0;
+              num_ratings = 0;
             }
-          
+            try {
+              comments= Integer.parseInt(table.getString(j, 8));
+            } catch (NumberFormatException e) {
+              comments=0;
+            }
+            person=new Person(0, 0, 0, 0, videoId, uploader, age, category, vidLength, views, rating, num_ratings, comments);
             personList.add(person);
             personMap.put(person.videoId, person);
         }
@@ -74,7 +82,7 @@ class YoutubeDay {
     }
     
     void printPerson(String id) {
-       Person person = personMap.get(id); 
+       Person person = personMap.get(id);
        
         println("VideoID: "+person.videoId);
         println("uploader: "+person.uploader);
